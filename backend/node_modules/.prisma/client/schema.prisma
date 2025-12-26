@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OWNER
+}
+
+enum PlayerStatus {
+  UNSOLD
+  IN_AUCTION
+  SOLD
+}
+
+enum AuctionStatus {
+  IDLE
+  RUNNING
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  teamId       String?
+  team         Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Team {
+  id                            String         @id @default(cuid())
+  name                          String         @unique
+  purseTotal                    Int
+  purseRemaining                Int
+  owners                        User[]
+  players                       Player[]       @relation("PlayersSoldToTeam")
+  bids                          Bid[]
+  auctionStatesAsHighestBidTeam AuctionState[] @relation("HighestBidTeam")
+  createdAt                     DateTime       @default(now())
+  updatedAt                     DateTime       @updatedAt
+}
+
+model Player {
+  id                     String         @id @default(cuid())
+  name                   String         @unique
+  basePrice              Int            @default(10000000) // 1 Cr (in rupees)
+  status                 PlayerStatus   @default(UNSOLD)
+  soldPrice              Int?
+  soldToTeamId           String?
+  soldToTeam             Team?          @relation("PlayersSoldToTeam", fields: [soldToTeamId], references: [id], onDelete: SetNull)
+  auctionStatesAsCurrent AuctionState[] @relation("CurrentPlayer")
+  bids                   Bid[]
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+  playerId  String
+  teamId    String
+  amount    Int
+  createdAt DateTime @default(now())
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([playerId, createdAt])
+  @@index([teamId, createdAt])
+}
+
+model AuctionState {
+  id               Int           @id @default(1)
+  status           AuctionStatus @default(IDLE)
+  currentPlayerId  String?
+  currentPrice     Int           @default(0)
+  highestBidTeamId String?
+  updatedAt        DateTime      @updatedAt
+
+  currentPlayer  Player? @relation("CurrentPlayer", fields: [currentPlayerId], references: [id], onDelete: SetNull)
+  highestBidTeam Team?   @relation("HighestBidTeam", fields: [highestBidTeamId], references: [id], onDelete: SetNull)
+}
+
+model Settings {
+  id                 Int      @id @default(1)
+  basePrice          Int      @default(10000000) // 1 Cr
+  stepBelowThreshold Int      @default(20000) // 20,000
+  threshold          Int      @default(200000000) // 20 Cr
+  stepAboveThreshold Int      @default(10000000) // 1 Cr
+  updatedAt          DateTime @updatedAt
+}
