@@ -6,7 +6,7 @@ export declare class AuctionGateway implements OnGatewayConnection, OnGatewayDis
     server: Server;
     constructor(jwt: JwtService);
     handleConnection(client: Socket): Promise<void>;
-    handleDisconnect(_client: Socket): void;
+    handleDisconnect(): void;
     emitAuctionState(state: unknown): void;
     emitBidEvent(event: unknown): void;
 }

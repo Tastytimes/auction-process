@@ -30,13 +30,16 @@ let AuctionGateway = class AuctionGateway {
         }
         try {
             const payload = await this.jwt.verifyAsync(token);
-            client.data.user = payload;
+            const userPayload = payload && typeof payload === 'object'
+                ? payload
+                : {};
+            client.data.user = userPayload;
         }
         catch {
             client.disconnect(true);
         }
     }
-    handleDisconnect(_client) {
+    handleDisconnect() {
     }
     emitAuctionState(state) {
         this.server.emit('auction:state', state);

@@ -28,7 +28,7 @@ let OwnerController = class OwnerController {
         this.auction = auction;
     }
     async dashboard(user) {
-        const teamId = user.teamId;
+        const teamId = user.teamId ?? undefined;
         if (!teamId)
             return { team: null };
         const team = await this.prisma.team.findUnique({

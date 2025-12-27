@@ -120,10 +120,14 @@ let AuctionService = class AuctionService {
             where: { id: 1 },
             include: { currentPlayer: true, highestBidTeam: true },
         });
-        if (!state || state.status !== client_1.AuctionStatus.RUNNING || !state.currentPlayerId) {
+        if (!state ||
+            state.status !== client_1.AuctionStatus.RUNNING ||
+            !state.currentPlayerId) {
             throw new common_1.BadRequestException('No active auction');
         }
-        const team = await this.prisma.team.findUnique({ where: { id: user.teamId } });
+        const team = await this.prisma.team.findUnique({
+            where: { id: user.teamId },
+        });
         if (!team)
             throw new common_1.BadRequestException('Team not found');
         const step = this.computeStep(state.currentPrice, settings.threshold, settings.stepBelowThreshold, settings.stepAboveThreshold);
@@ -163,7 +167,9 @@ let AuctionService = class AuctionService {
         const state = await this.prisma.auctionState.findUnique({
             where: { id: 1 },
         });
-        if (!state || state.status !== client_1.AuctionStatus.RUNNING || !state.currentPlayerId) {
+        if (!state ||
+            state.status !== client_1.AuctionStatus.RUNNING ||
+            !state.currentPlayerId) {
             throw new common_1.BadRequestException('No active auction');
         }
         const player = await this.prisma.player.findUnique({

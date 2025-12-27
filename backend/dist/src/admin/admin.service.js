@@ -62,7 +62,9 @@ let AdminService = class AdminService {
     }
     async createTeam(dto) {
         const ownerEmail = dto.ownerEmail.toLowerCase();
-        const existing = await this.prisma.user.findUnique({ where: { email: ownerEmail } });
+        const existing = await this.prisma.user.findUnique({
+            where: { email: ownerEmail },
+        });
         if (existing)
             throw new common_1.BadRequestException('Owner email already exists');
         const passwordHash = await bcrypt.hash(dto.ownerPassword, 10);
@@ -103,7 +105,10 @@ let AdminService = class AdminService {
         await this.prisma.player.createMany({
             data: toCreate.map((name) => ({ name })),
         });
-        return { created: toCreate.length, skipped: names.length - toCreate.length };
+        return {
+            created: toCreate.length,
+            skipped: names.length - toCreate.length,
+        };
     }
     async getSettings() {
         return this.prisma.settings.upsert({

@@ -1,3 +1,4 @@
+import { type AuthenticatedUser } from '../common/current-user.decorator';
 import { AuctionService } from './auction.service';
 import { PlaceBidDto } from './dto/place-bid.dto';
 import { StartAuctionDto } from './dto/start-auction.dto';
@@ -80,7 +81,7 @@ export declare class AuctionController {
             purseRemaining: number;
         }[];
     }>;
-    start(user: any, dto: StartAuctionDto): Promise<{
+    start(user: AuthenticatedUser, dto: StartAuctionDto): Promise<{
         settings: {
             id: number;
             basePrice: number;
@@ -117,7 +118,7 @@ export declare class AuctionController {
             highestBidTeamId: string | null;
         }) | null;
     }>;
-    close(user: any): Promise<{
+    close(user: AuthenticatedUser): Promise<{
         sold: boolean;
         playerId?: undefined;
         teamId?: undefined;
@@ -126,7 +127,7 @@ export declare class AuctionController {
         playerId: string;
         teamId: string;
     }>;
-    bid(user: any, dto: PlaceBidDto): Promise<{
+    bid(user: AuthenticatedUser, dto: PlaceBidDto): Promise<{
         ok: boolean;
     }>;
 }

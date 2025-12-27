@@ -12,7 +12,7 @@ export declare class AuthController {
             teamId: string | null;
         };
     }>;
-    me(user: any): {
-        user: any;
+    me(user: unknown): {
+        user: unknown;
     };
 }

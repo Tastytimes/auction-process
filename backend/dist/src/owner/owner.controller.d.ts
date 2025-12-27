@@ -1,10 +1,11 @@
+import { type AuthenticatedUser } from '../common/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuctionService } from '../auction/auction.service';
 export declare class OwnerController {
     private readonly prisma;
     private readonly auction;
     constructor(prisma: PrismaService, auction: AuctionService);
-    dashboard(user: any): Promise<{
+    dashboard(user: AuthenticatedUser): Promise<{
         team: null;
         upcomingPlayers?: undefined;
         auctionState?: undefined;
